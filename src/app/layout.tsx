@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         />
       </head>
-      <body className={`${inter.variable} font-sans min-h-screen flex flex-col`}>
+      <body className={`${inter.variable} font-sans`}>
         {children}
         <Toaster position="top-right" richColors closeButton />
       </body>

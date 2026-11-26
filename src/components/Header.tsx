@@ -24,7 +24,7 @@ export default function Header({ showNav = true, initials = '' }: { showNav?: bo
     }`;
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-outline-variant/30">
+    <header className="sticky top-0 z-40 shrink-0 bg-white/95 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
       <div className="max-w-7xl mx-auto px-4">
         <div className="h-20 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
           <div className="justify-self-start hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface-container text-primary text-label-sm">
@@ -39,6 +39,11 @@ export default function Header({ showNav = true, initials = '' }: { showNav?: bo
               <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-label-md">
                 {initials}
               </div>
+            )}
+            {showNav && (
+              <form action={logout} className="hidden lg:block">
+                <button type="submit" className={cls(false)}>Logout</button>
+              </form>
             )}
             {showNav && (
               <button
@@ -57,9 +62,6 @@ export default function Header({ showNav = true, initials = '' }: { showNav?: bo
             {LINKS.map((l) => (
               <Link key={l.href} href={l.href} className={cls(isActive(l.href))}>{l.label}</Link>
             ))}
-            <form action={logout}>
-              <button type="submit" className={cls(false)}>Logout</button>
-            </form>
           </nav>
         )}
       </div>

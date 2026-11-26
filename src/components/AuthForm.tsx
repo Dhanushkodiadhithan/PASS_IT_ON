@@ -42,7 +42,7 @@ export default function AuthForm() {
   );
 
   return (
-    <div className="w-full max-w-lg bg-white border border-outline-variant/30 rounded-2xl shadow-xl p-8">
+    <div className="auth-card w-full max-w-lg bg-white border border-outline-variant/30 rounded-2xl shadow-xl p-8">
       <div className="text-center mb-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-primary text-label-sm mb-3">
           <Icon name="school" size={16} /> Verified Campus Network
@@ -51,7 +51,7 @@ export default function AuthForm() {
         <p className="text-body-sm text-on-surface-variant mt-1">Sign in with your college email.</p>
       </div>
 
-      <div className="grid grid-cols-2 p-1 bg-surface-container-low rounded-xl mb-6 border border-outline-variant/20">
+      <div className="auth-tabs grid grid-cols-2 p-1 bg-surface-container-low rounded-xl mb-6 border border-outline-variant/20">
         {tab('signin', 'Sign In')}
         {tab('signup', 'Create Account')}
       </div>
@@ -64,7 +64,7 @@ export default function AuthForm() {
           </div>
         )}
         <div>
-          <label className={labelCls}>College Email</label>
+          <label className={labelCls}>Email</label>
           <input name="email" type="email" required className={inputCls} placeholder="you@campus.edu" />
         </div>
         {mode === 'signup' && (

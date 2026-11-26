@@ -13,15 +13,13 @@ export default async function SubjectPage({ params }: { params: { id: string } }
   const { supabase, user } = await requireUser();
   const id = Number(params.id);
   if (!Number.isFinite(id)) notFound();
-
-  const { data: subject } = await supabase.from('subjects_view').select('*').eq('id', id).maybeSingle();
-  if (!subject) notFound();
-  const s = subject as SubjectRow;
-
-  const [{ data }, saved] = await Promise.all([
+const [{ data: subject }, { data }, saved] = await Promise.all([
+    supabase.from('subjects_view').select('*').eq('id', id).maybeSingle(),
     supabase.from('resources_view').select(RESOURCE_COLUMNS).eq('subject_id', id).order('created_at', { ascending: false }),
     getSavedIds(supabase, user.id),
   ]);
+  if (!subject) notFound();
+  const s = subject as SubjectRow;
   const resources = (data ?? []) as Resource[];
   const semLink = `/browse?dept=${s.dept_code}&reg=${s.reg_name}&year=${s.academic_year}&sem=${s.semester}`;
 

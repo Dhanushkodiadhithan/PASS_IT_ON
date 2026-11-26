@@ -1,10 +1,10 @@
 import UploadForm, { type UploadInitial } from '@/components/UploadForm';
-import { requireUser } from '@/lib/supabase/server';
+import { getProfile, requireUser } from '@/lib/supabase/server';
 import type { Filters, SubjectRow } from '@/lib/types';
 
 export default async function UploadPage({ searchParams }: { searchParams: Filters }) {
-  const { supabase, user } = await requireUser();
-  const { data: me } = await supabase.from('students').select('department,academic_year').eq('id', user.id).single();
+  const { supabase } = await requireUser();
+  const me = await getProfile();
 
   const year = me?.academic_year ?? 1;
   let initial: UploadInitial = {

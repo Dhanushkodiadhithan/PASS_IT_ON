@@ -3,13 +3,13 @@ import ProfileForm from '@/components/ProfileForm';
 import { btnSecondary } from '@/components/ui';
 import { logout } from '@/actions/auth';
 import { initials, yearLabel } from '@/lib/format';
-import { requireUser } from '@/lib/supabase/server';
+import { getProfile, requireUser } from '@/lib/supabase/server';
+
 
 export default async function ProfilePage() {
-  const { supabase, user } = await requireUser();
-  const { data: me } = await supabase.from('students').select('full_name,department,academic_year').eq('id', user.id).single();
+  const { user } = await requireUser();
+  const me = await getProfile();
   const name = me?.full_name ?? 'Student';
-
   return (
     <section className="w-full max-w-2xl mx-auto space-y-6">
       <div className="text-center space-y-1">
