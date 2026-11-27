@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { DEPARTMENTS } from '@/lib/constants';
+import { revalidatePath } from 'next/cache';
 
 export async function login(fd: FormData) {
   const email = String(fd.get('email') ?? '').trim().toLowerCase();
@@ -44,4 +45,17 @@ export async function logout() {
   const supabase = createClient();
   await supabase.auth.signOut();
   redirect('/login');
+}
+export async function updateAcademicYear(year: number) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: 'Not signed in.' };
+  if (![1, 2, 3, 4].includes(year)) return { ok: false, error: 'Select a valid academic year.' };
+
+  const { data, error } = await supabase
+    .from('students').update({ academic_year: year }).eq('id', user.id).select('id');
+  if (error || !data?.length) return { ok: false, error: 'Could not update your academic year.' };
+
+  revalidatePath('/', 'layout');
+  return { ok: true };
 }

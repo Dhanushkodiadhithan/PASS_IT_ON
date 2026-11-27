@@ -47,7 +47,7 @@ export default function MyUploadsTable({ rows }: { rows: Resource[] }) {
 
   return (
     <>
-      <div className="bg-white border border-outline-variant/30 rounded-xl overflow-hidden">
+      <div className="bg-white border border-outline-variant/30 rounded-xl overflow-hidden cursor-pointer">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-body-sm">
             <thead className="bg-surface-container-low border-b border-outline-variant/30 text-label-md text-on-surface">

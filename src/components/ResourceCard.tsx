@@ -8,7 +8,7 @@ import type { Resource } from '@/lib/types';
 export default function ResourceCard({ r, saved }: { r: Resource; saved: boolean }) {
   const icon = fileIcon(r.file_type);
   return (
-    <div className="p-5 bg-white border border-outline-variant/30 rounded-xl hover:border-primary/50 hover:shadow-md transition flex flex-col justify-between">
+    <div className="p-5 bg-white border cursor-pointer border-outline-variant/30 rounded-xl hover:border-primary/50 hover:shadow-md transition flex flex-col justify-between">
       <div>
         <div className="flex items-center justify-between mb-2.5">
           <TypeBadge slug={r.type_slug} />

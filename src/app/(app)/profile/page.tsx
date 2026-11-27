@@ -1,24 +1,21 @@
 import Icon from '@/components/Icon';
-import LogoutButton from '@/components/LogoutButton';
 import ProfileForm from '@/components/ProfileForm';
-import { btnSecondary } from '@/components/ui';
-import { DEPARTMENTS } from '@/lib/constants';
-import { initials, yearLabel } from '@/lib/format';
+import { initials } from '@/lib/format';
 import { getProfile, requireUser } from '@/lib/supabase/server';
 
 export default async function ProfilePage() {
-  const { user } = await requireUser();
-  const me = await getProfile();
+  const { supabase, user } = await requireUser();
+  const [me, { count }] = await Promise.all([
+    getProfile(),
+    supabase.from('resources').select('id', { count: 'exact', head: true }).eq('uploaded_by', user.id),
+  ]);
   const name = me?.full_name ?? 'Student';
-  const deptCode = me?.department ?? 'CSE';
-  const dept = DEPARTMENTS.find((d) => d.code === deptCode);
-  const deptText = dept ? `${dept.name} (${dept.code})` : deptCode;
 
   return (
     <section className="w-full max-w-2xl mx-auto space-y-6">
       <div className="text-center space-y-1">
         <h2 className="text-headline-lg text-on-surface">Student Profile</h2>
-        <p className="text-body-sm text-on-surface-variant">Manage your name. Department is fixed.</p>
+        <p className="text-body-sm text-on-surface-variant">Your account details.</p>
       </div>
 
       <div className="p-6 sm:p-8 bg-white border border-outline-variant/30 rounded-2xl shadow-sm space-y-6">
@@ -30,12 +27,18 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        <ProfileForm fullName={name} department={deptText} email={user.email ?? ''} yearText={yearLabel(me?.academic_year ?? 1)} />
+        <ProfileForm
+          fullName={name}
+          department={me?.department ?? 'CSE'}
+          email={user.email ?? ''}
+          academicYear={me?.academic_year ?? 1}
+        />
 
-        <div className="pt-4 border-t border-outline-variant/20">
-          <LogoutButton className={`${btnSecondary} text-error border-error/30 hover:bg-error-container/20`}>
-            <Icon name="logout" size={18} /> Log Out
-          </LogoutButton>
+        <div className="pt-4 border-t border-outline-variant/20 flex items-center justify-between">
+          <span className="text-body-sm text-on-surface-variant flex items-center gap-1.5">
+            <Icon name="upload_file" size={18} className="text-primary" /> Uploads
+          </span>
+          <span className="text-title-md text-primary">{count ?? 0}</span>
         </div>
       </div>
     </section>
