@@ -12,15 +12,17 @@ import { requireUser } from '@/lib/supabase/server';
 import type { Resource } from '@/lib/types';
 
 export default async function ResourcePage({ params }: { params: { id: string } }) {
-  const { supabase, user } = await requireUser();
-  const { data } = await supabase.from('resources_view').select(RESOURCE_COLUMNS).eq('id', params.id).maybeSingle();
+   const { supabase, user } = await requireUser();
+  const [{ data }, saved] = await Promise.all([
+    supabase.from('resources_view').select(RESOURCE_COLUMNS).eq('id', params.id).maybeSingle(),
+    getSavedIds(supabase, user.id),
+  ]);
   if (!data) notFound();
   const r = data as Resource;
 
-  const [{ data: rel }, saved] = await Promise.all([
-    supabase.from('resources_view').select(RESOURCE_COLUMNS).eq('subject_id', r.subject_id).neq('id', r.id).order('created_at', { ascending: false }).limit(3),
-    getSavedIds(supabase, user.id),
-  ]);
+  const { data: rel } = await supabase
+    .from('resources_view').select(RESOURCE_COLUMNS)
+    .eq('subject_id', r.subject_id).neq('id', r.id).order('created_at', { ascending: false }).limit(3);
   const related = (rel ?? []) as Resource[];
   const icon = fileIcon(r.file_type);
   const fileUrl = `/api/resources/${r.id}/file`;

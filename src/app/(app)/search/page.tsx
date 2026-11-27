@@ -2,25 +2,20 @@ import EmptyState from '@/components/EmptyState';
 import FilterPanel from '@/components/FilterPanel';
 import ResourceCard from '@/components/ResourceCard';
 import SearchBar from '@/components/SearchBar';
-import { RESOURCE_COLUMNS, applyResourceFilters, getSavedIds } from '@/lib/queries';
+import { listResources, listSubjects } from '@/lib/cache';
+import { getSavedIds } from '@/lib/queries';
 import { requireUser } from '@/lib/supabase/server';
-import type { Filters, Resource } from '@/lib/types';
+import type { Filters } from '@/lib/types';
 
 export default async function SearchPage({ searchParams }: { searchParams: Filters }) {
   const { supabase, user } = await requireUser();
   const sp = searchParams;
 
-  const resourcesQ = applyResourceFilters(
-    supabase.from('resources_view').select(RESOURCE_COLUMNS, { count: 'exact' }).order('created_at', { ascending: false }).limit(60),
-    sp
-  );
-  const subjectsQ = applyResourceFilters(
-    supabase.from('subjects_view').select('id,name').order('name'),
-    { dept: sp.dept, reg: sp.reg, year: sp.year, sem: sp.sem }
-  );
-  const [{ data, count }, { data: subjects }, saved] = await Promise.all([resourcesQ, subjectsQ, getSavedIds(supabase, user.id)]);
-  const resources = (data ?? []) as Resource[];
-
+  const [{ rows: resources, count }, subjectList, saved] = await Promise.all([
+    listResources(sp),
+    listSubjects(sp),
+    getSavedIds(supabase, user.id),
+  ]);
   return (
     <div className="space-y-6">
       <div className="p-6 bg-white border border-outline-variant/30 rounded-2xl shadow-sm space-y-4">
@@ -35,7 +30,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Filte
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <FilterPanel subjects={(subjects ?? []) as { id: number; name: string }[]} />
+        <FilterPanel subjects={subjectList} />
         <div className="lg:col-span-3">
           {resources.length === 0 ? (
             <EmptyState icon="manage_search" title="No results found." text="Try broader terms, or clear some filters." href="/upload" cta="Upload Material" />

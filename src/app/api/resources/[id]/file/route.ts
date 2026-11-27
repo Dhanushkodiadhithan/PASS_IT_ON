@@ -4,10 +4,9 @@ import { MIME } from '@/lib/constants';
 import { presignDownload } from '@/lib/b2';
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
+  // Middleware already rejects unauthenticated /api calls, and RLS only returns rows to
+  // logged-in students, so no separate getUser() round trip is needed here.
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
   const preview = new URL(req.url).searchParams.get('mode') === 'preview';
   const { data: r } = await supabase
     .from('resources').select('storage_key,file_name,file_type').eq('id', params.id).maybeSingle();

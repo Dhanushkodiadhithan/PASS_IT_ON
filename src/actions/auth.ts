@@ -1,10 +1,8 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { DEPARTMENTS } from '@/lib/constants';
-
 
 export async function login(fd: FormData) {
   const email = String(fd.get('email') ?? '').trim().toLowerCase();
@@ -46,18 +44,4 @@ export async function logout() {
   const supabase = createClient();
   await supabase.auth.signOut();
   redirect('/login');
-}
-
-export async function updateProfile(input: { fullName: string }) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: 'Not signed in.' };
-  const fullName = input.fullName.trim();
-  if (fullName.length < 2) return { ok: false, error: 'Enter your full name.' };
-
-  const { error } = await supabase
-    .from('students').update({ full_name: fullName }).eq('id', user.id);
-  if (error) return { ok: false, error: 'Could not save changes.' };
-  revalidatePath('/', 'layout');
-  return { ok: true };
 }

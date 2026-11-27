@@ -1,9 +1,10 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { createClient, requireUser } from '@/lib/supabase/server';
 import { FILE_TYPES, MAX_FILE_SIZE, REPORT_REASONS } from '@/lib/constants';
 import { deleteObject, headObject } from '@/lib/b2';
+
 
 type Scope = { department: string; regulation: string; academicYear: number; semester: number };
 type SB = ReturnType<typeof createClient>;
@@ -83,6 +84,7 @@ export async function createResource(input: {
 
   if (error || !data) return { ok: false, error: 'Could not save the resource.' };
   revalidatePath('/', 'layout');
+  revalidateTag('resources');
   return { ok: true, id: data.id as string };
 }
 
@@ -114,6 +116,7 @@ export async function updateResource(input: {
 
   if (error) return { ok: false, error: 'Could not update the resource.' };
   revalidatePath('/', 'layout');
+  revalidateTag('resources');
   return { ok: true };
 }
 
@@ -127,6 +130,7 @@ export async function deleteResource(id: string) {
 
   await deleteObject(r.storage_key).catch(() => {}); // file cleanup is best-effort
   revalidatePath('/', 'layout');
+  revalidateTag('resources');
   return { ok: true };
 }
 

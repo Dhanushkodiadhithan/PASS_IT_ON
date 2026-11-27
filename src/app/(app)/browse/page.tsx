@@ -5,26 +5,20 @@ import Icon from '@/components/Icon';
 import ResourceCard from '@/components/ResourceCard';
 import { btnPrimary } from '@/components/ui';
 import { yearLabel } from '@/lib/format';
-import { RESOURCE_COLUMNS, applyResourceFilters, getSavedIds } from '@/lib/queries';
+import { listResources, listSubjects } from '@/lib/cache';
+import { getSavedIds } from '@/lib/queries';
 import { requireUser } from '@/lib/supabase/server';
-import type { Filters, Resource } from '@/lib/types';
+import type { Filters } from '@/lib/types';
 
 export default async function BrowsePage({ searchParams }: { searchParams: Filters }) {
   const { supabase, user } = await requireUser();
   const sp = searchParams;
 
-  const resourcesQ = applyResourceFilters(
-    supabase.from('resources_view').select(RESOURCE_COLUMNS, { count: 'exact' }).order('created_at', { ascending: false }).limit(60),
-    sp
-  );
-  const subjectsQ = applyResourceFilters(
-    supabase.from('subjects_view').select('id,name').order('name'),
-    { dept: sp.dept, reg: sp.reg, year: sp.year, sem: sp.sem }
-  );
-
-  const [{ data, count }, { data: subjects }, saved] = await Promise.all([resourcesQ, subjectsQ, getSavedIds(supabase, user.id)]);
-  const resources = (data ?? []) as Resource[];
-  const subjectList = (subjects ?? []) as { id: number; name: string }[];
+  const [{ rows: resources, count }, subjectList, saved] = await Promise.all([
+    listResources(sp),
+    listSubjects(sp),
+    getSavedIds(supabase, user.id),
+  ]);
   const subjectName = sp.subject ? subjectList.find((s) => String(s.id) === sp.subject)?.name : undefined;
 
   const crumbs = [sp.dept, sp.reg, sp.year && yearLabel(Number(sp.year)), sp.sem && `Semester ${sp.sem}`, subjectName].filter(Boolean) as string[];

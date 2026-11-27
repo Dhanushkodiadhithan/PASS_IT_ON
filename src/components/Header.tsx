@@ -18,6 +18,8 @@ export default function Header({ showNav = true, initials = '' }: { showNav?: bo
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+  const logoutCls =
+  'px-3 py-1.5 rounded-lg text-title-md whitespace-nowrap bg-error text-on-error hover:bg-error/80 transition-colors duration-200';
   const cls = (a: boolean) =>
     `px-3 py-1.5 rounded-lg text-title-md whitespace-nowrap transition-colors ${
       a ? 'bg-primary-container text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
@@ -48,7 +50,7 @@ export default function Header({ showNav = true, initials = '' }: { showNav?: bo
             )}
             {showNav && (
               <div className="hidden lg:block">
-                <LogoutButton className={cls(false)}>Logout</LogoutButton>
+                <LogoutButton className={`${logoutCls} w-full text-left`}>Logout</LogoutButton>
               </div>
             )}
             {showNav && (

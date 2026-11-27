@@ -30,7 +30,7 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        <ProfileForm fullName={name} departmentText={deptText} email={user.email ?? ''} yearText={yearLabel(me?.academic_year ?? 1)} />
+        <ProfileForm fullName={name} department={deptText} email={user.email ?? ''} yearText={yearLabel(me?.academic_year ?? 1)} />
 
         <div className="pt-4 border-t border-outline-variant/20">
           <LogoutButton className={`${btnSecondary} text-error border-error/30 hover:bg-error-container/20`}>

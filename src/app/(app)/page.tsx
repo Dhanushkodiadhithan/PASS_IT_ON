@@ -2,18 +2,15 @@ import Link from 'next/link';
 import Icon from '@/components/Icon';
 import SearchBar from '@/components/SearchBar';
 import ResourceCard from '@/components/ResourceCard';
+import { btnPrimary } from '@/components/ui';
 import { DEPARTMENTS, RESOURCE_TYPES } from '@/lib/constants';
-import { RESOURCE_COLUMNS, getSavedIds } from '@/lib/queries';
+import { getRecentResources } from '@/lib/cache';
+import { getSavedIds } from '@/lib/queries';
 import { requireUser } from '@/lib/supabase/server';
-import type { Resource } from '@/lib/types';
 
 export default async function HomePage() {
   const { supabase, user } = await requireUser();
-  const [{ data }, saved] = await Promise.all([
-    supabase.from('resources_view').select(RESOURCE_COLUMNS).order('created_at', { ascending: false }).limit(6),
-    getSavedIds(supabase, user.id),
-  ]);
-  const recent = (data ?? []) as Resource[];
+  const [recent, saved] = await Promise.all([getRecentResources(), getSavedIds(supabase, user.id)]);
 
   return (
     <div className="space-y-8">
