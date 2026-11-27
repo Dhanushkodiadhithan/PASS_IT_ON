@@ -2,7 +2,8 @@
   {
     "corsRuleName": "allow-app-uploads-downloads",
     "allowedOrigins": [
-      "http://localhost:3000"
+      "http://localhost:3000",
+      "http://clg-pass-it-on.vercel.app"
     ],
     "allowedOperations": [
       "s3_put",

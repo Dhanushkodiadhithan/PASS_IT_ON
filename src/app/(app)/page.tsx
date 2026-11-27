@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Icon from '@/components/Icon';
 import SearchBar from '@/components/SearchBar';
 import ResourceCard from '@/components/ResourceCard';
-import { btnPrimary } from '@/components/ui';
 import { DEPARTMENTS, RESOURCE_TYPES } from '@/lib/constants';
 import { getRecentResources } from '@/lib/cache';
 import { getSavedIds } from '@/lib/queries';
