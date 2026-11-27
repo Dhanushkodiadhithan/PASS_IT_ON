@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Icon from '@/components/Icon';
 import SearchBar from '@/components/SearchBar';
 import ResourceCard from '@/components/ResourceCard';
-import { btnPrimary } from '@/components/ui';
 import { DEPARTMENTS, RESOURCE_TYPES } from '@/lib/constants';
 import { RESOURCE_COLUMNS, getSavedIds } from '@/lib/queries';
 import { requireUser } from '@/lib/supabase/server';
@@ -61,32 +60,19 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <section className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-headline-sm text-on-surface">Recently Uploaded</h3>
-            <Link href="/browse" className="text-primary hover:underline text-label-md">View all</Link>
-          </div>
-          {recent.length === 0 ? (
-            <p className="text-body-sm text-on-surface-variant">Nothing uploaded yet — be the first to share something!</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {recent.map((r) => <ResourceCard key={r.id} r={r} saved={saved.has(r.id)} />)}
-            </div>
-          )}
-        </section>
-
-        <div className="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/30 flex flex-col justify-between gap-6">
-          <div className="space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
-              <Icon name="upload_file" size={26} />
-            </div>
-            <h4 className="text-headline-sm text-on-surface">Got helpful notes or lab material?</h4>
-            <p className="text-body-sm text-on-surface-variant">Help your juniors and batchmates. Upload a PDF, document, slides, image or ZIP in under a minute.</p>
-          </div>
-          <Link href="/upload" className={`${btnPrimary} w-full`}><Icon name="add_circle" /> Upload Resource</Link>
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-headline-sm text-on-surface">Recently Uploaded</h3>
+          <Link href="/browse" className="text-primary hover:underline text-label-md">View all</Link>
         </div>
-      </div>
+        {recent.length === 0 ? (
+          <p className="text-body-sm text-on-surface-variant">Nothing uploaded yet — be the first to share something!</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {recent.map((r) => <ResourceCard key={r.id} r={r} saved={saved.has(r.id)} />)}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

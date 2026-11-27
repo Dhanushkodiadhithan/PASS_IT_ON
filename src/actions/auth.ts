@@ -48,16 +48,15 @@ export async function logout() {
   redirect('/login');
 }
 
-export async function updateProfile(input: { fullName: string; department: string }) {
+export async function updateProfile(input: { fullName: string }) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'Not signed in.' };
   const fullName = input.fullName.trim();
   if (fullName.length < 2) return { ok: false, error: 'Enter your full name.' };
-  if (!DEPARTMENTS.some((d) => d.code === input.department)) return { ok: false, error: 'Invalid department.' };
 
   const { error } = await supabase
-    .from('students').update({ full_name: fullName, department: input.department }).eq('id', user.id);
+    .from('students').update({ full_name: fullName }).eq('id', user.id);
   if (error) return { ok: false, error: 'Could not save changes.' };
   revalidatePath('/', 'layout');
   return { ok: true };

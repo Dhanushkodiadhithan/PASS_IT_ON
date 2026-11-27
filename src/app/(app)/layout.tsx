@@ -11,7 +11,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="app-shell">
       <Header showNav initials={initials(me?.full_name ?? user.email ?? 'S')} />
       <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-        <div className="max-w-7xl mx-auto px-4 py-6 w-full">{children}</div>
+                <div className="max-w-7xl mx-auto px-4 py-4 w-full">{children}</div>
       </main>
       <Footer />
     </div>

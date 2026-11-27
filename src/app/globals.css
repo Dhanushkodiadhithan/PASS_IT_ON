@@ -15,11 +15,15 @@
   height: 100dvh;  /* correct on mobile browsers */
   overflow: hidden; /* only on the shell: its children are sized to fit, main scrolls itself */
 }
-/* Login/Register: on short screens only, tighten vertical spacing so the card fits
-   between header and footer. Taller screens are unchanged. */
-@media (min-width: 640px) and (max-height: 800px) {
-  .auth-card { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+/* Login/Register: on short screens, progressively tighten the card (and drop
+   the decorative badge/subtitle) so it fits between the header and footer
+   without page scrolling. Taller screens are unchanged. */
+@media (max-height: 800px) {
+  .auth-card { padding-top: 1rem; padding-bottom: 1rem; }
   .auth-head { margin-bottom: 0.75rem; }
   .auth-tabs { margin-bottom: 0.75rem; }
   .auth-card form > * + * { margin-top: 0.625rem !important; }
+}
+@media (max-height: 700px) {
+  .auth-badge, .auth-sub { display: none; }
 }

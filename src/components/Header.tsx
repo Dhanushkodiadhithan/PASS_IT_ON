@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import Icon from './Icon';
-import { logout } from '@/actions/auth';
+import LogoutButton from './LogoutButton';
 
 const LINKS = [
   { href: '/', label: 'Home' },
@@ -26,24 +26,30 @@ export default function Header({ showNav = true, initials = '' }: { showNav?: bo
   return (
     <header className="sticky top-0 z-40 shrink-0 bg-white/95 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="h-20 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-          <div className="justify-self-start hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface-container text-primary text-label-sm">
-            Campus Peer Network
+        <div className="h-14 grid grid-cols-[auto_1fr_auto] items-center gap-4">
+          <div className="text-left">
+            <h1 className="text-headline-sm font-bold text-primary tracking-tight leading-tight">PassItOn</h1>
+            <p className="text-label-sm text-on-surface-variant leading-tight whitespace-nowrap">Share. Learn. Pass It On.</p>
           </div>
-          <div className="col-start-2 text-center">
-            <h1 className="text-headline-sm font-bold text-primary tracking-tight">PassItOn</h1>
-            <p className="text-label-sm text-on-surface-variant">Share. Learn. Pass It On.</p>
-          </div>
-          <div className="col-start-3 justify-self-end flex items-center gap-3">
+
+          {showNav ? (
+            <nav className="hidden lg:flex items-center justify-center gap-1">
+              {LINKS.map((l) => (
+                <Link key={l.href} href={l.href} className={cls(isActive(l.href))}>{l.label}</Link>
+              ))}
+            </nav>
+          ) : <span />}
+
+          <div className="flex items-center gap-2">
             {showNav && initials && (
               <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-label-md">
                 {initials}
               </div>
             )}
             {showNav && (
-              <form action={logout} className="hidden lg:block">
-                <button type="submit" className={cls(false)}>Logout</button>
-              </form>
+              <div className="hidden lg:block">
+                <LogoutButton className={cls(false)}>Logout</LogoutButton>
+              </div>
             )}
             {showNav && (
               <button
@@ -56,26 +62,16 @@ export default function Header({ showNav = true, initials = '' }: { showNav?: bo
             )}
           </div>
         </div>
-
-        {showNav && (
-          <nav className="hidden lg:flex items-center justify-center gap-1 pb-3 pt-1 border-t border-outline-variant/20">
-            {LINKS.map((l) => (
-              <Link key={l.href} href={l.href} className={cls(isActive(l.href))}>{l.label}</Link>
-            ))}
-          </nav>
-        )}
       </div>
 
       {showNav && open && (
-        <nav className="lg:hidden bg-white border-t border-outline-variant/30 px-4 py-4 flex flex-col gap-1">
+        <nav className="lg:hidden bg-white border-t border-outline-variant/30 px-4 py-3 flex flex-col gap-1">
           {LINKS.map((l) => (
             <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className={cls(isActive(l.href))}>
               {l.label}
             </Link>
           ))}
-          <form action={logout}>
-            <button type="submit" className={`${cls(false)} w-full text-left`}>Logout</button>
-          </form>
+          <LogoutButton className={`${cls(false)} w-full text-left`}>Logout</LogoutButton>
         </nav>
       )}
     </header>

@@ -12,6 +12,7 @@ export default function AuthForm() {
   const router = useRouter();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [error, setError] = useState('');
+  const [showPw, setShowPw] = useState(false);
   const [pending, start] = useTransition();
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -34,7 +35,7 @@ export default function AuthForm() {
 
   const tab = (m: 'signin' | 'signup', label: string) => (
     <button
-      type="button" onClick={() => { setMode(m); setError(''); }}
+      type="button" onClick={() => { setMode(m); setError(''); setShowPw(false); }}
       className={`py-2 text-center text-title-md rounded-lg transition-all ${
         mode === m ? 'bg-white text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
       }`}
@@ -42,21 +43,21 @@ export default function AuthForm() {
   );
 
   return (
-    <div className="auth-card w-full max-w-lg bg-white border border-outline-variant/30 rounded-2xl shadow-xl p-8">
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-primary text-label-sm mb-3">
+    <div className="auth-card w-full max-w-lg bg-white border border-outline-variant/30 rounded-2xl shadow-xl p-6">
+      <div className="auth-head text-center mb-4">
+        <div className="auth-badge inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-primary text-label-sm mb-2">
           <Icon name="school" size={16} /> Verified Campus Network
         </div>
         <h2 className="text-headline-md text-on-surface">Access College Resources</h2>
-        <p className="text-body-sm text-on-surface-variant mt-1">Sign in with your college email.</p>
+        <p className="auth-sub text-body-sm text-on-surface-variant mt-1">Sign in with your college email.</p>
       </div>
 
-      <div className="auth-tabs grid grid-cols-2 p-1 bg-surface-container-low rounded-xl mb-6 border border-outline-variant/20">
+      <div className="auth-tabs grid grid-cols-2 p-1 bg-surface-container-low rounded-xl mb-4 border border-outline-variant/20">
         {tab('signin', 'Sign In')}
         {tab('signup', 'Create Account')}
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-3">
         {mode === 'signup' && (
           <div>
             <label className={labelCls}>Full Name</label>
@@ -85,7 +86,25 @@ export default function AuthForm() {
         )}
         <div>
           <label className={labelCls}>Password</label>
-          <input name="password" type="password" required minLength={mode === 'signup' ? 8 : undefined} className={inputCls} placeholder="••••••••" />
+          <div className="relative">
+            <input
+              name="password"
+              type={showPw ? 'text' : 'password'}
+              required
+              minLength={mode === 'signup' ? 8 : undefined}
+              className={`${inputCls} pr-11`}
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw((v) => !v)}
+              aria-label={showPw ? 'Hide password' : 'Show password'}
+              aria-pressed={showPw}
+              className="absolute inset-y-0 right-0 px-3 flex items-center text-on-surface-variant hover:text-on-surface"
+            >
+              <Icon name={showPw ? 'visibility_off' : 'visibility'} size={20} />
+            </button>
+          </div>
         </div>
         {error && <p className="text-body-sm text-error">{error}</p>}
         <button type="submit" disabled={pending} className={`${btnPrimary} w-full`}>
